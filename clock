@@ -1,20 +1,30 @@
 #!/usr/bin/env python3
 
-import time
+import argparse, time
 
 class color:
     blue = "\033[1;34;48m"
     end = "\033[1;37;0m"
 
-try:
-    def print_time(local_time):
-        print("\033[K", end="") # Clear the line
-        print("    " + color.blue + "Local time:" + color.end, local_time, end="\r", flush=True) # Print the time with formatting, color, line overwriting and no buffering
-        time.sleep(0.1)
-    
-    while True:
-        local_time = time.strftime("%A %Y-%m-%d %H:%M:%S", time.localtime())
-        print_time(local_time)
+def print_time(local_time):
+    print("\033[K", end="")
+    print("    " + color.blue + "Local time:" + color.end, local_time, end="\r", flush=True)
 
-except KeyboardInterrupt:
-    print("") # Use print instead of pass to keep the time on the terminal after exiting
+def main():
+    parser = argparse.ArgumentParser(description="Display local time")
+    parser.add_argument("-r", "--refresh", type=float, default=0.1, help="Refresh time in seconds (default: 0.1)")
+    parser.add_argument("-f", "--format", default="%A %Y-%m-%d %H:%M:%S", help="Time format (default: %A %Y-%m-%d %H:%M:%S)")
+
+    args = parser.parse_args()
+
+    try:
+        while True:
+            local_time = time.strftime(args.format, time.localtime())
+            print_time(local_time)
+            time.sleep(args.refresh)
+
+    except KeyboardInterrupt:
+        print("") # Use print instead of pass to keep the time on the terminal after exiting
+
+if __name__ == "__main__":
+    main()
