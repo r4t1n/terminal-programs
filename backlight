@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+
+import argparse, os
+
+class color:
+    blue = "\033[1;34;48m"
+    red = "\033[1;31;48m"
+    end = "\033[1;37;0m"
+
+def find_backlight_folder():
+    backlight_path = "/sys/class/backlight/"
+
+    try:
+        backlight_folders = next(os.walk(backlight_path))[1]
+
+        if not backlight_folders:
+            raise FileNotFoundError("no backlight folders found in:", backlight_path)
+
+        return backlight_folders[0]
+
+    except (StopIteration, FileNotFoundError) as e:
+        print(f" {color.red}Error finding backlight folder:{color.end} {e}")
+        exit(1)
+
+def get_brightness(brightness_file_path):
+    try:
+        with open(brightness_file_path, "r") as brightness_file:
+            return brightness_file.read().strip()
+    except IOError as e:
+        print(f" {color.red}Error reading from {brightness_file_path}:{color.end} {e}")
+        exit(1)
+
+def main():
+    parser = argparse.ArgumentParser(description="Change the backlight brightness")
+    parser.add_argument("backlight", nargs="?", type=int, default=255, help="Set the backlight brightness (default: 255)")
+    parser.add_argument("--get", action="store_true", help="Get the backlight brightness")
+
+    args = parser.parse_args()
+
+    if os.geteuid() != 0:
+        exit(color.red + " You need to have root privileges to run this script!")
+
+
+    backlight_folder = find_backlight_folder()
+    brightness_file_path = os.path.join("/sys/class/backlight/", backlight_folder, "brightness")
+
+    if args.get:
+        current_brightness = get_brightness(brightness_file_path)
+        print(f" {color.blue}Backlight brightness:{color.end} {current_brightness}")
+    else:
+        try:
+            with open(brightness_file_path, "w") as brightness_file:
+                brightness_file.write(str(args.backlight))
+        except IOError as e:
+            print(f" {color.red}Error writing to {brightness_file_path}:{color.end} {e}")
+
+if __name__ == "__main__":
+    main()
+
