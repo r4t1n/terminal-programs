@@ -8,7 +8,7 @@ class color:
 
 def print_time(local_time):
     print("\033[K", end="")
-    print("    " + color.blue + "Local time:" + color.end, local_time, end="\r", flush=True)
+    print("  ", color.blue, "Local time:" + color.end, local_time, end="\r", flush=True)
 
 def main():
     parser = argparse.ArgumentParser(description="Display local time")
