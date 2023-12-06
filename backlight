@@ -2,18 +2,24 @@
 
 import argparse, os
 
-parser = argparse.ArgumentParser(description="Change the backlight brightness")
-parser.add_argument("backlight", nargs="?", type=int, default=255, help="Set the backlight brightness (default: 255)")
-parser.add_argument("--get", action="store_true", help="Get the backlight brightness")
-args = parser.parse_args()
-
 class color:
     blue = "\033[1;34;48m"
     red = "\033[1;31;48m"
     end = "\033[1;37;0m"
 
-def find_backlight_folder():
-    backlight_path = "/sys/class/backlight"
+if os.geteuid() != 0:
+    exit(color.red + " You need to have root privileges to run this script!")
+
+# ARGPARSE ARGUMENTS
+parser = argparse.ArgumentParser(description="Change the backlight brightness")
+parser.add_argument("backlight", nargs="?", type=int, default=255, help="Set the backlight brightness (default: 255)")
+parser.add_argument("--get", action="store_true", help="Get the backlight brightness")
+args = parser.parse_args()
+
+# CONSTANTS
+BACKLIGHT_PATH = "/sys/class/backlight"
+
+def find_device_path():
     try:
         device_path = next(os.walk(backlight_path))[1]
 
@@ -36,11 +42,8 @@ def get_brightness(brightness_file_path):
         exit(1)
 
 def main():
-    if os.geteuid() != 0:
-        exit(color.red + " You need to have root privileges to run this script!")
-
-    backlight_folder = find_backlight_folder()
-    brightness_file_path = os.path.join("/sys/class/backlight/", backlight_folder, "brightness")
+    device_path = find_device_path()
+    brightness_file_path = os.path.join(backlight_path, device_path, "brightness")
 
     if args.get:
         current_brightness = get_brightness(brightness_file_path)
