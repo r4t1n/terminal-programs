@@ -21,10 +21,10 @@ BACKLIGHT_PATH = "/sys/class/backlight"
 
 def find_device_path():
     try:
-        device_path = next(os.walk(backlight_path))[1]
+        device_path = next(os.walk(BACKLIGHT_PATH))[1]
 
         if not device_path:
-            raise FileNotFoundError("no device directories found in: " + backlight_path)
+            raise FileNotFoundError("no device directories found in: " + BACKLIGHT_PATH)
 
         return device_path[0]
 
@@ -43,7 +43,7 @@ def get_brightness(brightness_file_path):
 
 def main():
     device_path = find_device_path()
-    brightness_file_path = os.path.join(backlight_path, device_path, "brightness")
+    brightness_file_path = os.path.join(BACKLIGHT_PATH, device_path, "brightness")
 
     if args.get:
         current_brightness = get_brightness(brightness_file_path)
