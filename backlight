@@ -6,8 +6,7 @@ import argparse, os
 parser = argparse.ArgumentParser(description="Change the backlight brightness")
 
 parser.add_argument("backlight", nargs="?", type=float, default=100, help="set the backlight brightness as a percentage (default: 100)")
-parser.add_argument("--get", action="store_true", help="get the backlight brightness")
-parser.add_argument("--get-max", action="store_true", help="get the max backlight brightness")
+parser.add_argument("--get", action="store_true", help="get the backlight brightness and max brightness")
 
 args = parser.parse_args()
 
@@ -25,49 +24,38 @@ def find_device_path():
 
         if not device_path:
             raise FileNotFoundError("no device directories found in: " + BACKLIGHT_PATH)
-        
+
         backlight_device_path = os.path.join(BACKLIGHT_PATH, device_path[0])
         return backlight_device_path
-
     except (StopIteration, FileNotFoundError) as e:
         print(f" {color.red}Error finding device directory:{color.end} {e}")
         exit(1)
 
-def get_actual_brightness(actual_brightness_path):
+def get_brightness(backlight_device_path):
+    actual_brightness_path = os.path.join(backlight_device_path, "actual_brightness")
+    max_brightness_path = os.path.join(backlight_device_path, "max_brightness")
+
     try:
         with open(actual_brightness_path, "r") as actual_brightness_file:
-            return actual_brightness_file.read().strip()
-
-    except IOError as e:
-        print(f" {color.red}Error reading from {actual_brightness_path}:{color.end} {e}")
-        exit(1)
-
-def get_max_brightness(max_brightness_path):
-    try:
+            actual_brightness = actual_brightness_file.read().strip()
         with open(max_brightness_path, "r") as max_brightness_file:
-            return max_brightness_file.read().strip()
-
+            max_brightness = max_brightness_file.read().strip()
     except IOError as e:
-        print(f" {color.red}Error reading from {max_brightness_path}:{color.end} {e}")
+        print(f" {color.red}Error reading from {actual_brightness_path} or {max_brightness_path}:{color.end} {e}")
         exit(1)
+
+    print(f"     {color.blue}Backlight brightness:{color.end} {actual_brightness}\n {color.blue}Max backlight brightness:{color.end} {max_brightness}")
 
 def main():
     backlight_device_path = find_device_path()
-    max_brightness_path = os.path.join(backlight_device_path, "max_brightness")
-    max_brightness = get_max_brightness(max_brightness_path)
 
     if args.get:
-        actual_brightness_path = os.path.join(backlight_device_path, "actual_brightness")
-        actual_brightness = get_actual_brightness(actual_brightness_path)
-        print(f" {color.blue}Backlight brightness:{color.end} {actual_brightness}")
-    elif args.get_max:
-        print(f" {color.blue}Max backlight brightness:{color.end} {max_brightness}")
+        get_brightness(backlight_device_path)
     else:
         brightness_path = os.path.join(backlight_device_path, "brightness")
 
         if os.geteuid() != 0:
             exit(color.red + " You need to have root privileges to set the brightness!")
-
 
         try:
             with open(brightness_path, "w") as brightness_file:
