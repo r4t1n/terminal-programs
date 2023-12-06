@@ -25,35 +25,38 @@ def find_device_path():
 
         if not device_path:
             raise FileNotFoundError("no device directories found in: " + BACKLIGHT_PATH)
-
-        return device_path[0]
+        
+        backlight_device_path = os.path.join(BACKLIGHT_PATH, device_path[0])
+        return backlight_device_path
 
     except (StopIteration, FileNotFoundError) as e:
         print(f" {color.red}Error finding device directory:{color.end} {e}")
         exit(1)
 
-def get_brightness(brightness_file_path):
+def get_actual_brightness(actual_brightness_path):
     try:
-        with open(brightness_file_path, "r") as brightness_file:
-            return brightness_file.read().strip()
+        with open(actual_brightness_path, "r") as actual_brightness_file:
+            return actual_brightness_file.read().strip()
 
     except IOError as e:
-        print(f" {color.red}Error reading from {brightness_file_path}:{color.end} {e}")
+        print(f" {color.red}Error reading from {actual_brightness_file_path}:{color.end} {e}")
         exit(1)
 
 def main():
-    device_path = find_device_path()
-    brightness_file_path = os.path.join(BACKLIGHT_PATH, device_path, "brightness")
+    backlight_device_path = find_device_path()
+    actual_brightness_path = os.path.join(backlight_device_path, "actual_brightness")
+    brightness_path = os.path.join(backlight_device_path, "brightness")
+    max_brightness_path = os.path.join(backlight_device_path, "max_brightness")
 
     if args.get:
-        current_brightness = get_brightness(brightness_file_path)
-        print(f" {color.blue}Backlight brightness:{color.end} {current_brightness}")
+        actual_brightness = get_actual_brightness(actual_brightness_path)
+        print(f" {color.blue}Backlight brightness:{color.end} {actual_brightness}")
     else:
         try:
-            with open(brightness_file_path, "w") as brightness_file:
+            with open(brightness_path, "w") as brightness_file:
                 brightness_file.write(str(args.backlight))
         except IOError as e:
-            print(f" {color.red}Error writing to {brightness_file_path}:{color.end} {e}")
+            print(f" {color.red}Error writing to {brightness_path}:{color.end} {e}")
 
 if __name__ == "__main__":
     main()
