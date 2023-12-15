@@ -4,6 +4,20 @@ Mostly terminal eyecandy programs @w@
 
 ---
 
+## aplayloop
+
+Play a file in an infinite loop
+
+### Usage
+
+Just run the program like aplay:
+
+```
+aplayloop file.wav
+```
+
+---
+
 ## backlight
 
 Change the backlight brightness
@@ -13,7 +27,7 @@ Change the backlight brightness
 By just running:
 
 ```
-./backlight
+backlight
 ```
 
 it sets the backlight brightness to 255
@@ -31,7 +45,7 @@ timedatectl but for non-systemd systems
 ### Usage
 
 ```
-./clock
+clock
 ```
 
 **-c/\-\-color** to change the output color. Colors: blue, cyan, green, purple, red, yellow (default: blue)
