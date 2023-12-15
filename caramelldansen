@@ -1,0 +1,15 @@
+#!/usr/bin/env python3
+
+import os
+import time
+
+try:
+    while True:
+        os.system("asusctl led-mode static -c ffffff")
+        time.sleep(0.1)
+        os.system("asusctl led-mode static -c fc0fc0")
+        time.sleep(0.1)
+
+except KeyboardInterrupt:
+    print("\n Resetting keyboard...")
+    os.system("asusctl led-mode static -c ffffff")

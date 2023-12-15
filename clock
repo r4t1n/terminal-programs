@@ -5,7 +5,7 @@ import argparse, time
 parser = argparse.ArgumentParser(description="Display local time")
 parser.add_argument("-c", "--color", type=str, default="blue", help="Colors: blue, cyan, green, purple, red, yellow (default: blue)")
 parser.add_argument("-f", "--format", default="%A %Y-%m-%d %H:%M:%S", help="Time format (default: %A %Y-%m-%d %H:%M:%S)")
-parser.add_argument("-r", "--refresh", type=float, default=0.1, help="Refresh time in seconds (default: 0.1)")
+parser.add_argument("-r", "--refresh", type=float, default=1, help="Refresh time in seconds (default: 1)")
 args = parser.parse_args()
 
 class color:
