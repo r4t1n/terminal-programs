@@ -1,0 +1,15 @@
+#!/bin/bash
+
+# Check if an arguement is provided
+if [ $# -eq 0 ]; then
+    echo "Usage: $0 <argument>"
+    exit 1
+fi
+
+# Access the first command line argument
+file=$1
+
+# Play the file in an infinite loop
+while [ 1 ] ; do
+ aplay $file
+done
