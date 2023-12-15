@@ -16,6 +16,8 @@ Just run the program like aplay:
 aplayloop file.wav
 ```
 
+Use **Ctrl + Z** to exit
+
 ---
 
 ## backlight
